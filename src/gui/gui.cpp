@@ -137,22 +137,29 @@ namespace GUI {
     }
 
     void Render() {
-        // Toggle logic with debounce
-        if (GetAsyncKeyState(VK_DELETE) & 1) {
-            isOpen = !isOpen;
-        }
-
-        ImGui_ImplDX11_NewFrame();
-        ImGui_ImplWin32_NewFrame();
-        ImGui::NewFrame();
-
-        RenderOverlay();
-        RenderMenu();
-
-        ImGui::EndFrame();
-        ImGui::Render();
-        ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+    static bool initOnce = true;
+    if (initOnce) {
+        Logger::Success("GUI Render started!");
+        initOnce = false;
     }
+
+    // Toggle with better detection
+    if (GetAsyncKeyState(VK_DELETE) & 1) {
+        isOpen = !isOpen;
+        Logger::Log(isOpen ? "Menu OPENED" : "Menu CLOSED");
+    }
+
+    ImGui_ImplDX11_NewFrame();
+    ImGui_ImplWin32_NewFrame();
+    ImGui::NewFrame();
+
+    RenderOverlay();   // Always draw overlay
+    RenderMenu();      // Draw menu when open
+
+    ImGui::EndFrame();
+    ImGui::Render();
+    ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+}
 
     void Toggle() {
         isOpen = !isOpen;
